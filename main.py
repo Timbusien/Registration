@@ -49,7 +49,7 @@ def get_serv(message, user_name, user_num, user_loc):
 
 def get_deadl(message, user_num, user_name, user_serv, user_loc):
     user_deadl = message.text
-    bot.send_message(-1001500295547, f'New order!\n\n Clien name {user_name}\n'
+    bot.send_message(-1001500295547, f'New order!\n\n Clietn name {user_name}\n'
                                           f'Number: {user_num}\n'
                                           f'Location: {user_loc}\n'
                                           f'Servicing: {user_serv}\n'
