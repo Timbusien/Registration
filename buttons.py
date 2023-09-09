@@ -20,11 +20,10 @@ def geo():
     buttons.add(geo_button)
     return buttons
 
+
 def inline():
     buttons = types.InlineKeyboardMarkup()
     in_b = types.InlineKeyboardButton('Inline1', callback_data = 'in_button')
     in_b2 = types.InlineKeyboardButton('Inline2', callback_data = 'in_button2')
     buttons.row(in_b, in_b2)
     return buttons
-
-
