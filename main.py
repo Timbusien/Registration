@@ -57,6 +57,9 @@ def get_deadl(message, user_num, user_name, user_serv, user_loc):
     bot.send_message(user_id, 'Successfull')
     bot.register_next_step_handler(message,start_bot)
 
+@bot.message_handler(commands=['inlines'])
+def inline_t():
+    bot.send_message(user_id, 'Выберите кнопку', reply_markup=buttons.inline())
 
 
 
