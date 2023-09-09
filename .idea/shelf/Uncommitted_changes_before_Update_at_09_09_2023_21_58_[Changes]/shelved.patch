@@ -1,0 +1,61 @@
+Index: buttons.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from telebot import types\r\n\r\ndef choice_buttons():\r\n    buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)\r\n    reg = types.KeyboardButton('register')\r\n    start = types.KeyboardButton('/start')\r\n    buttons.add(reg, start)\r\n\r\n    return buttons\r\n\r\ndef num():\r\n    buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)\r\n    num_button = types.KeyboardButton('поделиться', request_contact=True)\r\n    buttons.add(num_button)\r\n    return buttons\r\n\r\ndef geo():\r\n    buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)\r\n    geo_button = types.KeyboardButton('send location', request_location=True)\r\n    buttons.add(geo_button)\r\n    return buttons
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/buttons.py b/buttons.py
+--- a/buttons.py	(revision e61980623274ff75ca5b327373d8c76463213831)
++++ b/buttons.py	(date 1694278009543)
+@@ -18,4 +18,13 @@
+     buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
+     geo_button = types.KeyboardButton('send location', request_location=True)
+     buttons.add(geo_button)
+-    return buttons
+\ No newline at end of file
++    return buttons
++
++def inline():
++    buttons = types.InlineKeyboardMarkup()
++    in_b = types.InlineKeyboardButton('Inline1', callback_data = 'in_button')
++    in_b2 = types.InlineKeyboardButton('Inline2', callback_data = 'in_button2')
++    buttons.row(in_b, in_b2)
++    return buttons
++
++
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import telebot\r\n\r\nimport buttons\r\n\r\nbot = telebot.TeleBot('6087928480:AAFM7NYRgrZhMAOPcxi9UU2U-Js9G01FTeI')\r\n\r\n@bot.message_handler(commands=['start'])\r\ndef start(message):\r\n    global user_id\r\n    user_id = message.from_user.id\r\n    print(message)\r\n    bot.send_message(user_id, 'привет!', reply_markup=buttons.choice_buttons())\r\n\r\n\r\n@bot.message_handler(content_types=['text'])\r\ndef start_bot(message):\r\n    if message.text == 'register':\r\n        bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())\r\n        bot.register_next_step_handler(message, get_name)\r\n\r\n\r\ndef get_name(message):\r\n    user_name = message.text\r\n    bot.send_message(user_id, 'fine, so send me a num', reply_markup=buttons.num())\r\n    bot.register_next_step_handler(message, get_num, user_name)\r\n\r\ndef get_num(message, user_name):\r\n    if message.contact and message.contact.phone_number:\r\n        user_num = message.contact.phone_number\r\n        bot.send_message(user_id, 'send location')\r\n        bot.register_next_step_handler(message, get_loc, user_name, user_num)\r\n    else:\r\n        bot.send_message(user_id, 'use button for location', reply_markup=buttons.geo())\r\n        bot.next_step_backend(message, get_num)\r\n\r\ndef get_loc(message, user_name, user_num):\r\n    if message.location:\r\n        user_location = message.location\r\n        bot.send_message(user_id, 'send what you want', reply_markup=telebot.types.ReplyKeyboardRemove())\r\n        bot.register_next_step_handler(message, get_serv, user_name, user_num, user_location)\r\n    else:\r\n        bot.send_message(user_id, 'send by button')\r\n        bot.register_next_step_handler(message, get_loc, user_name, user_num)\r\n\r\ndef get_serv(message, user_name, user_num, user_loc):\r\n    user_serv = message.text\r\n    bot.send_message(user_id, 'how many days')\r\n    bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)\r\n\r\ndef get_deadl(message, user_num, user_name, user_serv, user_loc):\r\n    user_deadl = message.text\r\n    bot.send_message(-1001500295547, f'New order!\\n\\n Clien name {user_name}\\n'\r\n                                          f'Number: {user_num}\\n'\r\n                                          f'Location: {user_loc}\\n'\r\n                                          f'Servicing: {user_serv}\\n'\r\n                                          f'Deadline: {user_deadl}\\n')\r\n    bot.send_message(user_id, 'Successfull')\r\n    bot.register_next_step_handler(message,start_bot)\r\n\r\n\r\n\r\n\r\n#-1001500295547\r\nbot.infinity_polling()\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision e61980623274ff75ca5b327373d8c76463213831)
++++ b/main.py	(date 1694277977435)
+@@ -47,9 +47,12 @@
+     bot.send_message(user_id, 'how many days')
+     bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)
+ 
++
++
++
+ def get_deadl(message, user_num, user_name, user_serv, user_loc):
+     user_deadl = message.text
+-    bot.send_message(-1001500295547, f'New order!\n\n Clien name {user_name}\n'
++    bot.send_message(-1001500295547, f'New order!\n\n Client name {user_name}\n'
+                                           f'Number: {user_num}\n'
+                                           f'Location: {user_loc}\n'
+                                           f'Servicing: {user_serv}\n'
+@@ -57,7 +60,9 @@
+     bot.send_message(user_id, 'Successfull')
+     bot.register_next_step_handler(message,start_bot)
+ 
+-
++@bot.message_handler(commands=['inlines'])
++def inline_t():
++    bot.send_message(user_id, 'выберите кнопку', reply_markup=buttons.inline())
+ 
+ 
+ #-1001500295547
