@@ -1,4 +1,5 @@
 from telebot import types
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 def choice_buttons():
     buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
