@@ -1,15 +1,29 @@
 import telebot
-
+import data
 import buttons
+from telebot.types import ReplyKeyboardRemove
 
 bot = telebot.TeleBot('6087928480:AAFM7NYRgrZhMAOPcxi9UU2U-Js9G01FTeI')
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    global user_id
+    # global user_id
     user_id = message.from_user.id
     print(message)
-    bot.send_message(user_id, 'привет!', reply_markup=buttons.choice_buttons())
+    print(user_id)
+    check = data.check(user_id)
+    if check:
+        products = data.get_product_name_id()
+        # bot.send_message(user_id, 'привет!', reply_markup=buttons.choice_buttons())
+        bot.send_message(user_id, 'Привет!', reply_markup=telebot.types.ReplyKeyboardRemove())
+        bot.send_message(user_id, 'Выберите опции', reply_markup=buttons.main(products))
+    elif not check:
+        bot.send_message(user_id, 'Привет отправьте ваше имя')
+
+    def get_name(message):
+        user_name = message.text
+        bot.send_message(user_id, 'fine, so send me a num', reply_markup=buttons.num())
+        bot.register_next_step_handler(message, get_num, user_name)
 
 
 @bot.message_handler(content_types=['text'])
@@ -19,10 +33,7 @@ def start_bot(message):
         bot.register_next_step_handler(message, get_name)
 
 
-def get_name(message):
-    user_name = message.text
-    bot.send_message(user_id, 'fine, so send me a num', reply_markup=buttons.num())
-    bot.register_next_step_handler(message, get_num, user_name)
+
 
 def get_num(message, user_name):
     if message.contact and message.contact.phone_number:
@@ -49,7 +60,7 @@ def get_serv(message, user_name, user_num, user_loc):
 
 def get_deadl(message, user_num, user_name, user_serv, user_loc):
     user_deadl = message.text
-    bot.send_message(-1001500295547, f'New order!\n\n Clietn name {user_name}\n'
+    bot.send_message(-1001500295547, f'New order!\n\n Clien name {user_name}\n'
                                           f'Number: {user_num}\n'
                                           f'Location: {user_loc}\n'
                                           f'Servicing: {user_serv}\n'
@@ -60,6 +71,10 @@ def get_deadl(message, user_num, user_name, user_serv, user_loc):
 @bot.message_handler(commands=['inlines'])
 def inline_t():
     bot.send_message(user_id, 'Выберите кнопку', reply_markup=buttons.inline())
+
+
+
+
 
 
 
