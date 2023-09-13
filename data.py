@@ -77,8 +77,30 @@ def append_product(user_id, user_product, quantity):
 
     price_product = get_product_id(user_product)[2]
 
-    db.execute('INSERT INTO cart '
+    KFC.execute('INSERT INTO cart '
                '(user_id, user_product, quantity)'
                'VALUES (?, ?, ?, ?);', (user_id, user_product, quantity, quantity * price_product))
+
+    db.commit()
+
+
+def remove(pr_id):
+    db = sqlite3.connect('my_database.db')
+    KFC = db.cursor()
+
+    KFC.execute('DELETE FROM cart WHERE user_product=?;', (pr_id,))
+
+
+def get_cart(user_id):
+    db = sqlite3.connect('my_database.db')
+    KFC = db.cursor()
+
+    user_cart = KFC.execute('SELECT store.pr_name, cart.quantity, cart.total'
+                           'INNER JOIN store ON store.pr_id=cart.user_product,'
+                           ' FROM cart WHERE user_id=?;', (user_id)).fetchall()
+
+    return user_cart
+
+
 
 
