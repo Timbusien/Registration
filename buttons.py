@@ -65,3 +65,15 @@ def choose_count(plus_or_minus='', curretn_amount=1):
 
     return buttons
 
+
+
+
+
+def get_cart():
+    buttons = InlineKeyboardMarkup(row_width=1)
+    clear = InlineKeyboardButton('Очистить корзину', callback_data='clear')
+    order = InlineKeyboardButton('Оформить заказ', callback_data='order')
+    back = InlineKeyboardButton('Назад', callback_data='back')
+    buttons.add(clear, order, back)
+    return buttons
+

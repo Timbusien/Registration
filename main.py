@@ -1,9 +1,10 @@
 import telebot
 import data
 import buttons
-from telebot.types import ReplyKeyboardRemove
+#from telebot.types import ReplyKeyboardRemove
 
 bot = telebot.TeleBot('6087928480:AAFM7NYRgrZhMAOPcxi9UU2U-Js9G01FTeI')
+user = {}
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -20,29 +21,91 @@ def start(message):
     elif not check:
         bot.send_message(user_id, 'Привет отправьте ваше имя')
 
-    def get_name(message):
-        user_name = message.text
-        bot.send_message(user_id, 'fine, so send me a num', reply_markup=buttons.num())
-        bot.register_next_step_handler(message, get_num, user_name)
+def get_name(message):
+    user_id = message.from_user.id
+    user = message.text
+    bot.send_message(user_id, 'Отправьте свой номер!', reply_markup=buttons.num())
+    bot.register_next_step_handler(message, get_num, user)
+    # user_name = message.text
+    # bot.send_message(user_id, 'fine, so send me a num', reply_markup=buttons.num())
 
 
-@bot.message_handler(content_types=['text'])
-def start_bot(message):
-    if message.text == 'register':
-        bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())
-        bot.register_next_step_handler(message, get_name)
+def get_num(message, name):
+    user_id = message.from_user.id
+
+    if message.contact:
+        phone_number = message.contact.number
+        data.reg_user(user_id, name, phone_number, 'Not yet')
+        bot.send_message(user_id, 'Вы успешно зарегистрировались!', reply_markup=telebot.types.ReplyKeyboardRemove())
+        products = data.get_product_name_id()
+        bot.send_message(user_id, 'Выберите пункт из меню', reply_markup=buttons.main(products))
+    elif not message.contact:
+        bot.send_message(user_id, 'Отправьте ваш контакт через кнопку', reply_markup=buttons.num())
+        bot.register_next_step_handler(message, get_num, name)
 
 
+@bot.callback_query_handlers(lambda call: call.data in ['plus', 'minus', 'add_cart', 'back'])
+def get_product_count(call):
+    user_id = call.message.chat.id
+    if call.data == 'plus':
+        actual = user[user_id]['product_quantity']
+
+        user[user_id]['product_quantity'] += 1
+        bot.edit_message_reply_markup(chat_id=user_id, message_id=call.message.message_id,
+                                      reply_markup=buttons.choose_count('plus', actual))
+
+    elif call.data == 'minus':
+        actual = user[user_id]['product_quantity']
+
+        user[user_id]['product_quantity'] -= 1
+        bot.edit_message_reply_markup(chat_id=user_id, message_id=call.message.message_id,
+                                      reply_markup=buttons.choose_count('minus', actual))
+
+    elif call.data == 'back':
+        products = data.get_product_name_id()
+        bot.edit_message_text('Выберите пункт меню', user_id, call.message.message_id,
+                              reply_markup=buttons.main(products))
+
+    elif call.data == 'add_cart':
+        product_count = user[user_id]['product_quantity']
+        user_product = user[user_id]['pr_name']
+
+        data.append_product(user_id, user_product, product_count)
+        products = data.get_product_name_id()
+        bot.edit_message_text('Продукт был добавлен в вашу корзину\n Что-то ещё?',
+                              user_id, call.message.message_id,
+                              reply_markup=buttons.main(products))
 
 
-def get_num(message, user_name):
-    if message.contact and message.contact.phone_number:
-        user_num = message.contact.phone_number
-        bot.send_message(user_id, 'send location')
-        bot.register_next_step_handler(message, get_loc, user_name, user_num)
-    else:
-        bot.send_message(user_id, 'use button for location', reply_markup=buttons.geo())
-        bot.next_step_backend(message, get_num)
+@bot.callback_query_handler(lambda call: call.data in ['order', 'cart', 'clear_cart'])
+def main_menu(call):
+    user_id = call.message.chat.id
+    message_id = call.message.chat.id
+    if call.data == 'order':
+        bot.delete_message(user_id, message_id)
+        bot.send_message(user_id, 'Отправьте вашу геолокацию для заказа!', reply_markup=buttons.geo())
+        bot.register_next_step_handler(call.message, get_loc)
+    elif call.data == 'cart':
+        user_cart = data.get_cart(user_id)
+
+        full = 'Ваша корзина:\n\n'
+        total = 0
+
+        for i in user_cart:
+            full += f'{i[0]} * {i[1]} = {i[2]}\n'
+            total += i[2]
+
+        full = f'\n Всего ко оплате: {total}'
+
+        bot.edit_message_text(full, user_id, message_id, reply_markup=buttons.get_cart())
+
+
+# @bot.message_handler(content_types=['text'])
+# def start_bot(message):
+#     if message.text == 'register':
+#         bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())
+#         bot.register_next_step_handler(message, get_name)
+
 
 def get_loc(message, user_name, user_num):
     if message.location:
@@ -68,9 +131,9 @@ def get_deadl(message, user_num, user_name, user_serv, user_loc):
     bot.send_message(user_id, 'Successfull')
     bot.register_next_step_handler(message,start_bot)
 
-@bot.message_handler(commands=['inlines'])
-def inline_t():
-    bot.send_message(user_id, 'Выберите кнопку', reply_markup=buttons.inline())
+# @bot.message_handler(commands=['inlines'])
+# def inline_t():
+#     bot.send_message(user_id, 'Выберите кнопку', reply_markup=buttons.inline())
 
 
 
