@@ -11,7 +11,7 @@ KFC.execute('CREATE TABLE IF NOT EXISTS user'
              ' (name TEXT, number TEXT, tg_id INT, address TEXT, date DATETIME);')
 
 KFC.execute('CREATE TABLE IF NOT EXISTS store'
-            '(pr_name TEXT, pr_des TEXT, price REAL, product_id PRIMARY KEY AUTOINCREMENT, product_quantity INT, pr_data DATETIME, TEXT, photo TEXT);')
+            '(pr_name TEXT, pr_des TEXT, price REAL, product_id INTEGER PRIMARY KEY AUTOINCREMENT, product_quantity INT, pr_data DATETIME, photo TEXT);')
 
 KFC.execute('CREATE TABLE IF NOT EXISTS cart'
             '(user_id INT, user_product TEXT, quantity INT, total REAL);')
@@ -23,7 +23,7 @@ def reg_user(tg_id, name, number, address):
 
     KFC.execute('INSERT INTO user '
                 '(tg_id, name, address, number, date) VALUES'
-                '(?, ?, ?, ?, ?);', (tg_id, name, number, address, datetime.now()))
+                '(?, ?, ?, ?, ?);', (tg_id, name, address, number, datetime.now()))
 
     db.commit()
 
@@ -32,7 +32,7 @@ def check(user_id):
 
     KFC = db.cursor()
 
-    checking = KFC.execute('SELECT tg_id user WHERE tg_id=?, (user_id,)')
+    checking = KFC.execute('SELECT tg_id user WHERE tg_id=?;', (user_id, ))
 
     if checking.fetchone():
         return True
@@ -45,8 +45,8 @@ def add_product(pr_name, price, pr_quantity, photo, pr_des):
     KFC = db.cursor()
 
     KFC.execute('INSERT INTO store '
-                '(pr_name, price, pr_quantity, pr_des, pr_photo) VALUES'
-                '(?, ?, ?, ?, ?);', (pr_name, price, pr_quantity, pr_des, photo, datetime.now()))
+                '(pr_name, price, product_quantity, pr_des, photo, pr_data) VALUES'
+                '(?, ?, ?, ?, ?, ?);', (pr_name, price, pr_quantity, pr_des, photo, datetime.now()))
 
     db.commit()
 
@@ -66,7 +66,7 @@ def get_product_id(pr_id):
     KFC = db.cursor()
 
     product_id = KFC.execute('SELECT pr_name, pr_des, photo, price'
-                             'FROM store WHERE pr_id=?', (pr_id,)).fetchone()
+                             'FROM store WHERE pr_id=?', (pr_id, )).fetchone()
 
     return product_id
 
@@ -79,7 +79,7 @@ def append_product(user_id, user_product, quantity):
 
     KFC.execute('INSERT INTO cart '
                '(user_id, user_product, quantity)'
-               'VALUES (?, ?, ?, ?);', (user_id, user_product, quantity, quantity * price_product))
+               'VALUES (?, ?, ?);', (user_id, user_product, quantity, quantity * price_product))
 
     db.commit()
 
@@ -88,7 +88,7 @@ def remove(pr_id):
     db = sqlite3.connect('my_database.db')
     KFC = db.cursor()
 
-    KFC.execute('DELETE FROM cart WHERE user_product=?;', (pr_id,))
+    KFC.execute('DELETE FROM cart WHERE user_product=?;', (pr_id, ))
 
 
 def get_cart(user_id):
@@ -97,10 +97,9 @@ def get_cart(user_id):
 
     user_cart = KFC.execute('SELECT store.pr_name, cart.quantity, cart.total'
                            'INNER JOIN store ON store.pr_id=cart.user_product,'
-                           ' FROM cart WHERE user_id=?;', (user_id)).fetchall()
+                           ' FROM cart WHERE user_id=?;', (user_id, )).fetchall()
 
     return user_cart
-
 
 
 

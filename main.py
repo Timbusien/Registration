@@ -5,6 +5,8 @@ import buttons
 
 bot = telebot.TeleBot('6087928480:AAFM7NYRgrZhMAOPcxi9UU2U-Js9G01FTeI')
 user = {}
+data.add_product('apple', 10000, 10, 'Apple just an apple', '')
+
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -84,7 +86,7 @@ def main_menu(call):
     if call.data == 'order':
         bot.delete_message(user_id, message_id)
         bot.send_message(user_id, 'Отправьте вашу геолокацию для заказа!', reply_markup=buttons.geo())
-        bot.register_next_step_handler(call.message, get_loc)
+        bot.register_next_step_handler(call.message, start)
     elif call.data == 'cart':
         user_cart = data.get_cart(user_id)
 
@@ -106,30 +108,30 @@ def main_menu(call):
 #         bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())
 #         bot.register_next_step_handler(message, get_name)
 
-
-def get_loc(message, user_name, user_num):
-    if message.location:
-        user_location = message.location
-        bot.send_message(user_id, 'send what you want', reply_markup=telebot.types.ReplyKeyboardRemove())
-        bot.register_next_step_handler(message, get_serv, user_name, user_num, user_location)
-    else:
-        bot.send_message(user_id, 'send by button')
-        bot.register_next_step_handler(message, get_loc, user_name, user_num)
-
-def get_serv(message, user_name, user_num, user_loc):
-    user_serv = message.text
-    bot.send_message(user_id, 'how many days')
-    bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)
-
-def get_deadl(message, user_num, user_name, user_serv, user_loc):
-    user_deadl = message.text
-    bot.send_message(-1001500295547, f'New order!\n\n Clien name {user_name}\n'
-                                          f'Number: {user_num}\n'
-                                          f'Location: {user_loc}\n'
-                                          f'Servicing: {user_serv}\n'
-                                          f'Deadline: {user_deadl}\n')
-    bot.send_message(user_id, 'Successfull')
-    bot.register_next_step_handler(message,start_bot)
+#
+# def get_loc(message, user_name, user_num):
+#     if message.location:
+#         user_location = message.location
+#         bot.send_message(user_id, 'send what you want', reply_markup=telebot.types.ReplyKeyboardRemove())
+#         bot.register_next_step_handler(message, get_serv, user_name, user_num, user_location)
+#     else:
+#         bot.send_message(user_id, 'send by button')
+#         bot.register_next_step_handler(message, get_loc, user_name, user_num)
+#
+# def get_serv(message, user_name, user_num, user_loc):
+#     user_serv = message.text
+#     bot.send_message(user_id, 'how many days')
+#     bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)
+#
+# def get_deadl(message, user_num, user_name, user_serv, user_loc):
+#     user_deadl = message.text
+#     bot.send_message(-1001500295547, f'New order!\n\n Client name {user_name}\n'
+#                                           f'Number: {user_num}\n'
+#                                           f'Location: {user_loc}\n'
+#                                           f'Servicing: {user_serv}\n'
+#                                           f'Deadline: {user_deadl}\n')
+#     bot.send_message(user_id, 'Successfull')
+#     bot.register_next_step_handler(message, start_bot)
 
 # @bot.message_handler(commands=['inlines'])
 # def inline_t():
@@ -143,5 +145,6 @@ def get_deadl(message, user_num, user_name, user_serv, user_loc):
 
 #-1001500295547
 bot.infinity_polling()
+
 
 
