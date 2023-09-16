@@ -46,7 +46,7 @@ def get_num(message, name):
         bot.register_next_step_handler(message, get_num, name)
 
 
-@bot.callback_query_handlers(lambda call: call.data in ['plus', 'minus', 'add_cart', 'back'])
+@bot.callback_query_handler(lambda call: call.data in ['plus', 'minus', 'add_cart', 'back'])
 def get_product_count(call):
     user_id = call.message.chat.id
     if call.data == 'plus':
