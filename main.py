@@ -46,7 +46,7 @@ def get_num(message, name):
         bot.register_next_step_handler(message, get_num, name)
 
 
-@bot.callback_query_handlers(lambda call: call.data in ['plus', 'minus', 'add_cart', 'back'])
+@bot.callback_query_handler(lambda call: call.data in ['plus', 'minus', 'add_cart', 'back'])
 def get_product_count(call):
     user_id = call.message.chat.id
     if call.data == 'plus':
@@ -102,36 +102,40 @@ def main_menu(call):
         bot.edit_message_text(full, user_id, message_id, reply_markup=buttons.get_cart())
 
 
-# @bot.message_handler(content_types=['text'])
-# def start_bot(message):
-#     if message.text == 'register':
-#         bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())
-#         bot.register_next_step_handler(message, get_name)
+@bot.message_handler(content_types=['text'])
+def start_bot(message):
+    user_id = message.text
+    if message.text == 'register':
+        bot.send_message(user_id, 'send me your name', reply_markup=telebot.types.ReplyKeyboardRemove())
+        bot.register_next_step_handler(message, get_name)
 
-#
-# def get_loc(message, user_name, user_num):
-#     if message.location:
-#         user_location = message.location
-#         bot.send_message(user_id, 'send what you want', reply_markup=telebot.types.ReplyKeyboardRemove())
-#         bot.register_next_step_handler(message, get_serv, user_name, user_num, user_location)
-#     else:
-#         bot.send_message(user_id, 'send by button')
-#         bot.register_next_step_handler(message, get_loc, user_name, user_num)
-#
-# def get_serv(message, user_name, user_num, user_loc):
-#     user_serv = message.text
-#     bot.send_message(user_id, 'how many days')
-#     bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)
-#
-# def get_deadl(message, user_num, user_name, user_serv, user_loc):
-#     user_deadl = message.text
-#     bot.send_message(-1001500295547, f'New order!\n\n Client name {user_name}\n'
-#                                           f'Number: {user_num}\n'
-#                                           f'Location: {user_loc}\n'
-#                                           f'Servicing: {user_serv}\n'
-#                                           f'Deadline: {user_deadl}\n')
-#     bot.send_message(user_id, 'Successfull')
-#     bot.register_next_step_handler(message, start_bot)
+
+def get_loc(message, user_name, user_num):
+    user_id = message.text
+    if message.location:
+        user_location = message.location
+        bot.send_message(user_id, 'send what you want', reply_markup=telebot.types.ReplyKeyboardRemove())
+        bot.register_next_step_handler(message, get_serv, user_name, user_num, user_location)
+    else:
+        bot.send_message(user_id, 'send by button')
+        bot.register_next_step_handler(message, get_loc, user_name, user_num)
+
+def get_serv(message, user_name, user_num, user_loc):
+    user_id = message.text
+    user_serv = message.text
+    bot.send_message(user_id, 'how many days')
+    bot.register_next_step_handler(message, get_deadl, user_num, user_name, user_serv, user_loc)
+
+def get_deadl(message, user_num, user_name, user_serv, user_loc):
+    user_id = message.text
+    user_deadl = message.text
+    bot.send_message(-1001500295547, f'New order!\n\n Client name {user_name}\n'
+                                          f'Number: {user_num}\n'
+                                          f'Location: {user_loc}\n'
+                                          f'Servicing: {user_serv}\n'
+                                          f'Deadline: {user_deadl}\n')
+    bot.send_message(user_id, 'Successfull')
+    bot.register_next_step_handler(message, start_bot)
 
 # @bot.message_handler(commands=['inlines'])
 # def inline_t():
