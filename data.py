@@ -32,7 +32,7 @@ def check(user_id):
 
     KFC = db.cursor()
 
-    checking = KFC.execute('SELECT tg_id user WHERE tg_id=?;', (user_id, ))
+    checking = KFC.execute('SELECT FROM tg_id user WHERE tg_id=?;', (user_id, ))
 
     if checking.fetchone():
         return True

@@ -50,6 +50,8 @@ def choose_count(plus_or_minus='', curretn_amount=1):
     count = InlineKeyboardButton(text=str(curretn_amount), callback_data=str(curretn_amount))
     add_cart = InlineKeyboardButton(text='Добавить в корзину', callback_data='add_cart')
     back = InlineKeyboardButton(text='Назад', callback_data='back')
+    #НОВОЕ!
+    delete = InlineKeyboardButton(text='удалить продукт', callback_data='delete')
 
     if plus_or_minus == 'plus':
         new_amount = int(curretn_amount)
@@ -62,6 +64,7 @@ def choose_count(plus_or_minus='', curretn_amount=1):
     buttons.add(minus, count, plus)
     buttons.row(add_cart)
     buttons.row(back)
+    buttons.row(delete)
 
     return buttons
 

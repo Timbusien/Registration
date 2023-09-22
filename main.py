@@ -77,6 +77,11 @@ def get_product_count(call):
         bot.edit_message_text('Продукт был добавлен в вашу корзину\n Что-то ещё?',
                               user_id, call.message.message_id,
                               reply_markup=buttons.main(products))
+    #НОВОЕ!
+    elif call.data == 'delete':
+        product_count = user.pop('product quantity')
+        data.remove(product_count)
+        bot.edit_message_text('Продукт был успешно удалён', user_id, call.message.message_id, reply_markup=buttons.main(product_count))
 
 
 @bot.callback_query_handler(lambda call: call.data in ['order', 'cart', 'clear_cart'])
