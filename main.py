@@ -17,11 +17,14 @@ def start(message):
     check = data.check(user_id)
     if check:
         products = data.get_product_name_id()
+        print(products)
         # bot.send_message(user_id, 'привет!', reply_markup=buttons.choice_buttons())
         bot.send_message(user_id, 'Привет!', reply_markup=telebot.types.ReplyKeyboardRemove())
         bot.send_message(user_id, 'Выберите опции', reply_markup=buttons.main(products))
     elif not check:
         bot.send_message(user_id, 'Привет отправьте ваше имя')
+
+    bot.register_next_step_handler(message, get_name)
 
 def get_name(message):
     user_id = message.from_user.id
@@ -36,7 +39,8 @@ def get_num(message, name):
     user_id = message.from_user.id
 
     if message.contact:
-        phone_number = message.contact.number
+        phone_number = message.contact.phone_number
+        print(message.contact)
         data.reg_user(user_id, name, phone_number, 'Not yet')
         bot.send_message(user_id, 'Вы успешно зарегистрировались!', reply_markup=telebot.types.ReplyKeyboardRemove())
         products = data.get_product_name_id()
@@ -87,7 +91,7 @@ def get_product_count(call):
 @bot.callback_query_handler(lambda call: call.data in ['order', 'cart', 'clear_cart'])
 def main_menu(call):
     user_id = call.message.chat.id
-    message_id = call.message.chat.id
+    message_id = call.message.user_id
     if call.data == 'order':
         bot.delete_message(user_id, message_id)
         bot.send_message(user_id, 'Отправьте вашу геолокацию для заказа!', reply_markup=buttons.geo())

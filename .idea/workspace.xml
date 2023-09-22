@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="afb6e187-bfa4-4715-b9dc-2f1fe0a4b7a9" name="Changes" comment="just a change">
+    <list default="true" id="afb6e187-bfa4-4715-b9dc-2f1fe0a4b7a9" name="Changes" comment="НОВОЕ">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/buttons.py" beforeDir="false" afterPath="$PROJECT_DIR$/buttons.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data.py" beforeDir="false" afterPath="$PROJECT_DIR$/data.py" afterDir="false" />
@@ -121,7 +121,15 @@
       <option name="project" value="LOCAL" />
       <updated>1695324338562</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="НОВОЕ">
+      <option name="closed" value="true" />
+      <created>1695400534364</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1695400534364</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -140,6 +148,7 @@
     <MESSAGE value="no mistakes lol" />
     <MESSAGE value="IDK" />
     <MESSAGE value="just a change" />
-    <option name="LAST_COMMIT_MESSAGE" value="just a change" />
+    <MESSAGE value="НОВОЕ" />
+    <option name="LAST_COMMIT_MESSAGE" value="НОВОЕ" />
   </component>
 </project>

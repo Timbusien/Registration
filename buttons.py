@@ -35,9 +35,9 @@ def main(get_product_name_id):
     order = InlineKeyboardButton(text='Оформить заказ', callback_data='order')
     cart = InlineKeyboardButton(text='Корзина', callback_data='cart')
     # return open
-    all_pr = [InlineKeyboardButton(text=f'{i[0]}', callback_data=i[1]) for i in get_product_name_id]
+    all_pr = [InlineKeyboardButton(text=i[0], callback_data=i[1]) for i in get_product_name_id]
     buttons.row(order)
-    buttons.add(all_pr)
+    buttons.add(*all_pr)
     buttons.row(cart)
 
     return buttons

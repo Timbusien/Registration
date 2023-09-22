@@ -32,7 +32,7 @@ def check(user_id):
 
     KFC = db.cursor()
 
-    checking = KFC.execute('SELECT FROM tg_id user WHERE tg_id=?;', (user_id, ))
+    checking = KFC.execute('SELECT tg_id FROM user WHERE tg_id=?;', (user_id, ))
 
     if checking.fetchone():
         return True
@@ -55,7 +55,7 @@ def get_product_name_id():
     db = sqlite3.connect('my_database.db')
     KFC = db.cursor()
 
-    product = KFC.execute('SELECT pr_name, product_id, pr_quantity, FROM store;').fetchall()
+    product = KFC.execute('SELECT pr_name, product_id, product_quantity FROM store;').fetchall()
     #print(product)
     sorted_pr = [(i[0], i[1]) for i in product if i[2] > 0]
 
@@ -95,9 +95,7 @@ def get_cart(user_id):
     db = sqlite3.connect('my_database.db')
     KFC = db.cursor()
 
-    user_cart = KFC.execute('SELECT store.pr_name, cart.quantity, cart.total'
-                           'INNER JOIN store ON store.pr_id=cart.user_product,'
-                           ' FROM cart WHERE user_id=?;', (user_id, )).fetchall()
+    user_cart = KFC.execute('SELECT store.pr_name, cart.quantity, cart.total FROM store INNER JOIN cart ON store.pr_id=cart.user_product WHERE user_id=?;', (user_id, )).fetchall()
 
     return user_cart
 
